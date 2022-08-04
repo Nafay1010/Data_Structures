@@ -1,0 +1,248 @@
+#include<iostream>
+using namespace std;
+
+class graph{
+	private:
+		int **A;
+		char *v;
+		
+		int size;
+	public:
+		graph(int s)
+		{
+			size=s;
+			
+			v = new char[size]; 
+			A = new int*[size];
+			
+			for(int i=0;i<size;i++)
+			{
+				A[i] = new int[size];
+			}
+			
+		//initializing vertix matrix
+		
+		for(int i=0; i<size; i++)
+		{
+			v[i] = '0';
+		}	
+			
+		//initializing adjacency matrix
+			for (int i=0; i<size; i++)
+			{
+				for (int j=0; j<size; j++)
+				{
+					A[i][j]=0;	
+				}	
+			}
+			
+		}
+		
+		void input()
+		{
+			for(int i=0; i<size; i++)
+			{
+				cout<<"Input vertix: ";
+				cin>>v[i];
+			}
+			
+			cout<<"Input Edges: "<<endl;
+			for (int i=0; i<size; i++)
+			{
+				for (int j=0; j<size; j++)
+				{
+					cout<<"For Vertex "<<v[i]<<": ";
+					cin>>A[i][j];	
+				}	
+				cout<<endl;
+			}
+		}
+		
+		void get()
+		{
+			cout<<"Adjacency Matrix"<<endl;
+			
+			for (int i=0; i<size; i++)
+			{
+				cout<<v[i]<<": ";
+				for (int j=0; j<size; j++)
+				{
+					cout<<A[i][j]<<"\t";	
+				}	
+				cout<<endl;
+			}
+			
+			cout<<endl;
+		}
+		
+		void add(char V)
+		{
+			int flag=0;
+			for(int i=0; i<size; i++)
+			{
+				if(V==v[i])
+				{
+					int flag=1;
+					cout<<"Vertix already exist !"<<endl;
+					return ;
+				}
+				else
+				continue;
+			}
+			
+			if(flag==0)
+			{
+				v[size] = V;
+				size++;
+			
+				//expanding array
+				
+				int **T= new int *[size]; //making a temp array
+				
+				for (int i=0; i<size; i++)
+					T[i]=new int[size];
+				
+				for (int i=0; i<size; i++) //initializing it with zero 
+				{
+					for (int j=0; j<size; j++)
+					{
+						T[i][j]=0;
+					}
+						
+				}	
+			
+				for (int i=0; i<size-1; i++) //copying the values in temp[i][j] from A[i][j]
+				{
+					for (int j=0; j<size-1; j++)
+						T[i][j]=A[i][j];
+				}
+			
+				A = new int *[size]; //redefining the adjacency matrix with new size
+				
+				for (int i=0; i<size; i++)
+					A[i]=new int[size];
+				
+				for (int i=0; i<size; i++) //copying the values from T[i][j] back to A[i][j]
+				{
+					for (int j=0; j<size; j++)
+					{
+						A[i][j]=T[i][j];
+					}
+						
+				}	
+				
+				for (int i=0; i<size; i++)//deleting T[i][j]
+					delete [] T[i];
+				
+			delete [] T;
+			}
+		}
+		//Considering undirected graphs
+		void add_edge(char Start, char End)
+		{
+			int flagS = 0; //start NOT found
+			int flagE = 0;//End NOT found
+			
+			int S, E;
+			//loop until start & end are found 
+			//if found then flags=1
+			
+			for(int i=0; i<size; i++)
+			{
+				if(Start == v[i])
+				{
+					S = i;
+					flagS = 1;//start found
+					
+				}
+				if(End == v[i])
+				{
+					E = i;
+					flagE = 1;//End found
+					
+				}
+				
+				if(flagS == 1 && flagE == 1)
+				break;
+			}
+		//	cout<<"Start index: "<<S<<endl;
+		//	cout<<"End index: "<<E<<endl;
+			
+			A[S][E] = 1;
+			A[E][S] = 1;
+		}
+		
+		~graph()
+		{
+			delete [] v;
+			for (int i=0; i<size; i++)
+				delete [] A[i];
+				
+			delete [] A;
+		}
+		
+		void in_degree(char V)
+		{
+			int sum = 0;
+			int x = 0;
+			//finding the index of Vertix (V)
+			for(int i=0 ; i<size; i++)
+			{
+				if(V == v[i])
+				{
+					x = i;
+					break;
+				}
+			}
+			
+			for (int i=0; i<size; i++)
+			{
+				if (A[i][x] == 1)
+					sum++;
+			}
+			cout<<"In degree of "<<v[x]<<" :"<<sum<<endl;
+		
+		}
+		
+		void out_degree(char V)
+		{
+			int sum = 0;
+			int x = 0;
+			//finding the index of Vertix (V)
+			for(int i=0 ; i<size; i++)
+			{
+				if(V == v[i])
+				{
+					x = i;
+					break;
+				}
+			}
+			
+			for (int i=0; i<size; i++)
+			{
+				if (A[x][i] == 1)
+					sum++;
+			}
+			cout<<"Out degree of "<<v[x]<<" :"<<sum<<endl;
+		}
+};
+
+		int main()
+		{
+			
+			graph G1(4);
+			
+			G1.input();
+			G1.get();
+			
+			
+			G1.add('F');
+			G1.get();
+			
+			G1.add_edge('B','C');
+			G1.get();
+			
+			G1.in_degree('A');
+			G1.out_degree('B');
+			
+		}

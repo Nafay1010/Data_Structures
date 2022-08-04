@@ -1,0 +1,295 @@
+/*
+ARRAY BASED LIST
+*/
+#include<cstddef>
+#include<iostream>
+#include<string>
+using  namespace std;
+
+class list{
+private:
+	int *arr; //will be used to initialize an empty list and will always point to the first position.
+	int size; //total capcity of the list
+    int len; //number of current elements in the list
+    int *current; //pointer to point the current position
+    int *temp; //can be used for temporary works
+public:
+
+    //Constructor for initializing List
+    //You can initialize size to any value
+	list(){
+	    size=0;
+	    len=0;
+	    arr=new int[size];
+	    current=arr;
+	    temp=arr;
+	}
+
+    //overloaded constructor
+    //user will pass decided the size of the list
+    list(int userSize){
+		size=userSize;
+		len=0;
+		arr=new int[size];
+		current=arr;
+	    temp=arr;
+	
+    }
+	
+	//outputs the whole list
+	void getFULLARRAY()
+	{
+		start();
+		if(isEmpty()==1)
+		cout<<"LIST IS EMPTY"<<endl;
+		else
+		{
+		cout<<"List: ";
+		for (int i=0; i<size; i++)
+		{
+			cout<<*current<<" ";
+			current++;
+		}
+		cout<<endl;
+		start();
+		}
+		
+	}
+	
+    //Deep Copy Constructor
+    //write code to create a new list and copy elements of the list passed in the parameter
+	list(list& othrList)
+	{		
+		len=othrList.len;
+		size=othrList.size;
+		
+		arr=new int [size];
+		current=arr;
+		
+		for (int i=0; i<size; i++)
+		{
+			*current=*(othrList.current);
+			othrList.current++;
+			current++;
+		}
+	
+	}
+
+    //Clear Or Empty the List
+	void clear(){
+		start();
+		for(int i=0;i<size;i++)
+		{
+			*current=-999;
+			current++;	
+		}
+		start();
+		len=0;
+	}
+
+
+    //Insert a Value at Specific Position
+	void insert(int value,int pos){
+	
+	//	start();
+		end();
+		for(int i=len; i>pos; i--)
+			{
+				*(current+1)=*current;
+				current--;
+			}
+			*(current)=value;
+			len++;
+			start();
+	}
+
+    //Insert the given value in the list at the next available position
+    void insert(int value)
+	{
+		start();
+		while(*current!=-999)
+		{
+			current++;
+		}	
+		*current=value;
+	}
+
+
+    //Remove a value at specific position
+	void remove(int pos){
+	
+		start();
+			for(int i=0; i<pos; i++)
+			{
+				current++;	
+			}
+			for(int i=pos; i<len;i++)
+			{
+				*current=*(current+1);
+				current++;
+				if(i==len-1)
+				*(current+1)=-999;
+			}
+		len--;
+		start();
+		
+//		int count=1;
+//		start();
+//		for (int i=1; i<=len; i++)
+//		{
+//			if (count >= pos)
+//			*current=*(current+1);
+//		
+//			count++;
+//			current++;
+//		}
+//		*(current+1)=-999;
+//		len--;
+//		start();
+		
+	}
+
+
+
+    //Get value stored at a specific position
+	int get(int pos){	
+		start();
+		if(isEmpty()==1)
+		cout<<"LIST IS EMPTY"<<endl;
+		else
+		{
+			for(int i=0;i<pos;i++)
+			{
+			current++;
+			}
+			return *current;
+		}
+		
+	}
+
+    //Update Existing value at a position
+	void update(int value,int pos){
+	start();
+	for(int i=0;i<pos;i++)
+	{
+		current++;
+	}
+	*current=value;
+	start();
+	}
+
+
+    //Find a value in the list
+	bool find(int value){
+		
+		start();
+		for(int i=0;i<len;i++)
+		{
+			if(*current==value)
+			return 1;
+			current++;
+		}
+			return 0;
+	}
+
+
+    //Return Current Length of the list
+	int length(){
+		return len;
+	}
+
+
+    //Move to starting position of the list
+	void start(){
+		current=arr;
+	}
+
+    //Move to the end of the list
+	void end(){
+		start();
+		for(int i=0;i<len;i++)
+		{
+			current++;
+		}
+	}
+    
+
+    //checks whehter the list is completely filled or not
+    bool isFull(){
+    	if(len==size)
+    	return 1;
+		else
+		return 0;
+    }
+    
+    //checks whehter the list is completely empty or not    
+    bool isEmpty(){
+		if(len==0)
+    	return 1;
+		else
+		return 0;
+    }
+
+};
+
+int main(){
+	
+	int s,ele;
+	int val,i;
+	int counter=0;
+	cout<<"ENTER SIZE FOR ARRAY: ";
+	cin>>s;
+	cout<<"HOW MANY ELEMENTS DO YOU WANT IN THIS LIST: ";
+	cin>>ele;
+	list l1(s);
+	l1.clear();
+//	l1.getFULLARRAY();
+	while(counter!=ele)
+	{
+	cout<<"ENTER VALUE TO BE INSERTED: ";
+	cin>>val;
+	cout<<"ENTER POSITION TO BE INSERTED: ";
+	cin>>i;
+	l1.insert(val,--i);
+	counter++;
+	}
+	
+	cout<<"BEFORE REMOVE"<<endl;
+	cout<<endl;
+	l1.getFULLARRAY();
+	
+	cout<<"ENTER POSITION TO BE REMOVED: ";
+	cin>>i;
+	l1.remove(--i);
+	cout<<"AFTER REMOVE"<<endl;
+	cout<<endl;
+	l1.getFULLARRAY();
+	cout<<"ENTER VALUE: ";
+	cin>>val;
+	cout<<"ENTER POSITION TO BE UPDATED: ";
+	cin>>i;
+	l1.update(val,--i);
+	cout<<"AFTER UPDATED"<<endl;
+	l1.getFULLARRAY();
+	cout<<"ENTER A POSITION TO BE OUTPUTED: ";
+	cin>>i;
+	cout<<l1.get(--i)<<endl;
+	cout<<"ENTER VALUE TO BE SEARCHED IN THE ARRAY: ";
+	cin>>val;
+	if(l1.find(val)==1)
+	cout<<val<<" is in the list"<<endl;
+	else
+	cout<<val<<" is NOT in the list"<<endl;
+	cout<<"ENTER A VALUE TO BE INSERTED IN THE NEXT AVAILABLE SPOT"<<endl;
+	cin>>val;
+	l1.insert(val);
+	cout<<"AFTER INSERTION"<<endl;
+	l1.getFULLARRAY();
+	
+	list l2(l1);
+	//l2.clear();
+	cout<<"L2 list"<<endl;
+	l2.getFULLARRAY();
+
+	system("pause");
+}   

@@ -1,0 +1,262 @@
+#include<iostream>
+#include<cstddef>
+using namespace std;
+
+class node{
+		public:
+
+		int data;
+		node *next;
+	
+		node(int val)
+		{
+			data=val;
+			next=NULL; 
+		}
+};
+
+class list{
+	private:
+		node *head;
+		node *cptr;
+		int size;
+	public:
+		list()
+		{
+			head=NULL;
+			cptr=NULL;
+	//		cptr->next=head;
+			size=0;
+		}
+		void start()
+		{
+			cptr=head;
+		}
+		int getsize()
+		{
+			return size;
+		}
+		void next()
+		{
+			cptr=cptr->next;
+		}
+		int data()
+		{
+			 return cptr->data;
+		}
+		void circular()
+		{
+			start();
+			for(int i=0;i<size-1;i++)
+			{
+				next();
+			}
+			cptr->next=head;
+		}
+		void get()
+		{
+			start();
+			cout<<"LIST"<<endl;
+			if(empty()==0)
+			{
+				cout<<"LIST IS EMPTY"<<endl;
+			}
+			else
+			{
+				for(int i=0; i<size; i++)
+				{
+					cout<<data()<<"\t";
+					next();
+				}
+				cout<<endl;
+			}
+		}
+		bool empty()
+		{
+			if(head==NULL || size==0)
+			{
+				return 0;
+			}
+			else
+			{
+				return 1;
+			}
+		}
+		void insert(int val, int pos)
+		{
+		//	cout<<"VAL :"<<val<<" POS: "<<pos<<endl;
+			node *n= new node(val);
+			if(pos>1 || pos<size+1)
+			{
+				start();
+				
+				for(int i=1; i<pos-1;i++)
+					next();
+				
+			//	node *temp= cptr->next;
+			//	cout<<"CPTR: "<<cptr->data<<endl;
+				n->next=cptr->next;
+				cptr->next=n;
+						
+				size++;
+				circular();
+			}
+			else if(pos==1)
+			{
+			//	cout<<"HEADER POINTER "<<head<<endl;
+				n->next=head;
+				head=n;
+				size++;
+				circular();
+			}
+			else
+			{
+				cout<<"INVALID POSITION"<<endl;
+			}
+			
+		}
+		
+		int search(int val)
+		{	
+			start();
+			if(empty()==0)
+			{
+				cout<<"LIST IS EMPTY"<<endl;
+			}
+			else
+			{
+			int pos=1;
+			int i=0;
+			while(i<size)//runs till current pointers address is NULL
+			{
+				if(cptr->data==val)
+				{
+					return pos;
+				}
+				next();
+				pos++;
+				i++;
+			}
+			return -1;
+			}
+		}
+		void deletion(int val)
+		{
+			if(search(val)==-1)
+			cout<<"VALUE NOT IN LIST"<<endl;
+			else
+			{
+			int pos=search(val);
+			start();
+			if(pos==1)
+			{
+				head=cptr->next;
+				delete cptr;
+				size--;
+				circular();
+			}
+			else if(pos>1 || pos<size)
+			{
+				for(int i=1; i<pos-1;i++)
+				{
+					next();
+				}
+				node *dptr= cptr->next;
+				cptr->next=dptr->next;
+				delete dptr;
+				size--;
+				circular();
+			}
+			 else if(pos==0)
+			{
+				cout<<"LIST IS EMPTY"<<endl;
+			}
+			
+			}
+			
+		}
+	
+	void getback(int pos)
+	{
+		start();
+		for(int i=0;i<pos;i++)
+		{
+			next();			
+		}	
+	}	
+	int josephous(int m, int n)
+	{
+		node *j= head;
+		cout<<"ORIGINAL LIST"<<endl;
+		get();
+		start();
+		while(n>0)
+		{
+			if(n==1)
+			{
+				return j->data;
+				break;
+			}
+			for(int i=0;i<m;i++)
+			{
+				cout<<j->data<<endl;
+				j=j->next;
+				
+			}
+			cout<<j->data<<" WILL BE ELIMINATED !"<<endl;
+			int val=j->data;
+			j=j->next;
+			deletion(val);
+			get();
+			n=size;
+	//		getback(x);
+		}
+		
+	}
+};
+int main()
+{
+	list l1;
+	int val;
+	int pos=1;
+	cout<<"ENTER VALUE TO BE INSERTED: ";
+	cin>>val;
+	
+	while(val!=-1)
+	{
+		l1.insert(val, pos);
+		cout<<"ENTER VALUE TO BE INSERTED[ENTER '-1' to quit]: ";
+		cin>>val;
+		pos++;
+	}
+		cout<<"ORIGINAL LIST"<<endl;
+		l1.get();
+//		cout<<"ENTER VAL TO BE SEARCHED IN THE LIST"<<endl;
+//		cin>>val;
+//		if(l1.search(val)==-1)
+//		{
+//			cout<<val<<" NOT IN LIST"<<endl;	
+//		}
+//		else
+//		{
+//			cout<<val<<" AT POSITION "<<l1.search(val)<<endl;
+//		}
+//		
+//		while(l1.empty()!=0)
+//		{
+//			cout<<"ENTER POS TO BE DELETED: ";
+//			cin>>pos;
+//			l1.deletion(pos);
+//			l1.get();
+//		}
+
+
+
+		int m,n;
+		cout<<"ENTER M[SKIPS]: ";
+		cin>>m;
+		n=l1.getsize();
+		cout<<"LEADER IS: "<<l1.josephous(m,n)<<endl;
+		
+		
+}	

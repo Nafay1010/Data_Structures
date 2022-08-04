@@ -1,0 +1,338 @@
+#include<iostream>
+#include <string>
+#include <sstream>
+using namespace std;
+#define COUNT 10
+
+class Node{
+	public:
+		int val;
+		Node *left;
+		Node *right;
+		int height;
+	Node(int v)
+	{
+		val=v;
+		left=NULL;
+		right=NULL;
+		height=1;
+	}
+};
+
+void print2DUtil(Node *root, int space) 
+{ 
+    // Base case 
+    if (root == NULL) 
+        return; 
+  
+    // Increase distance between levels 
+    space += COUNT; 
+  
+    // Process right child first 
+    print2DUtil(root->right, space); 
+  
+    // Print current Node after space 
+    // count 
+    cout<<endl; 
+    for (int i = COUNT; i < space; i++) 
+        cout<<" "; 
+    cout<<root->val<<"\n"; 
+  
+    // Process left child 
+    print2DUtil(root->left, space); 
+} 
+  
+// Wrapper over print2DUtil() 
+void print2D(Node *root) 
+{ 
+    // Pass initial space count as 0 
+    print2DUtil(root, 0); 
+} 
+
+
+class AVL{
+	public:
+	Node *root;
+	int duplicate;
+	
+	AVL()
+	{
+		root=NULL;
+		duplicate=0;
+	}
+	
+	int maxdepth(Node *n)
+		{
+			if(n==NULL)
+			return -1;
+			else
+			{
+				int l=maxdepth(n->left);
+				int r=maxdepth(n->right);
+				
+				if(l>r)
+				return(l+1);
+				else
+				return(r+1); 
+			}
+		}
+		
+	//function which returns the current height of the Node
+	int height(Node *n)
+		{
+		    if (n == NULL)
+		        return 0;
+		    return n->height;
+		}
+//	//function to get balance	
+//	int getBalance(Node *N)
+//		{
+//		    if (N == NULL)
+//		        return 0;
+//		    return height(N->left) - height(N->right);
+//		}
+	
+	//function which returns the maximum of the 2 integers
+	int max(int a, int b)
+		{	
+			return (a > b)? a : b;
+		}
+	
+	//function to rotate right 
+	Node *RotateRight(Node *N)
+		{
+			Node *x = N->left;
+		    Node *RC_x = x->right;
+		 
+		    // Perform rotation
+		    x->right = N;
+		    N->left = RC_x;
+		 
+		    // Update heights
+		    N->height = max(height(N->left),
+		                    height(N->right)) + 1;
+		    x->height = max(height(x->left),
+		                    height(x->right)) + 1;
+		 
+		    // Return new root
+		    return x;
+		}
+	
+	//function to rotate left
+	Node *RotateLeft(Node *N)
+		{
+			Node *y = N->right;
+		    Node *CL_y = y->left;
+		 
+		    // Perform rotation
+		    y->left = N;
+		    N->right = CL_y;
+		 
+		    // Update heights
+		    N->height = max(height(N->left),   
+		                    height(N->right)) + 1;
+		    y->height = max(height(y->left),
+		                    height(y->right)) + 1;
+		 
+		    // Return new root
+		    return y;
+		}
+		
+	// get balance of Node N	
+	int Balance(Node *N)
+		{
+		    if (N == NULL)
+		        return 0;
+		    return height(N->left) - height(N->right);
+		}	
+	
+
+		//r=root
+		//Nval= New val to be inserted	
+		Node *insert(Node *r, int Nval)
+		{		
+			//following normal BST insertion
+			if(r==NULL)//if tree empty
+			{
+				root=new Node(Nval);
+				return root;
+			}
+			if (Nval < r->val)
+        		r->left = insert(r->left, Nval);
+   			else if (Nval > r->val)
+        		r->right = insert(r->right, Nval);
+    		else // Val already in tree
+        		return r;
+			
+			//updating height
+			r->height = 1 + max(height(r->left),
+                        height(r->right));
+                        
+            //Getting balance of this Node
+            int balance = Balance(r);
+            
+            //Checking balance
+            // If this Node becomes unbalanced, then
+    		// using 4 cases to Keep the tree balanced
+    		
+    		if (balance > 1 && Nval < r->left->val) //CASE 1: LEFT SUBTREE OF THE LEFT CHILD
+      			  return RotateRight(r);
+    		
+    		else if (balance < -1 && Nval > r->right->val) //CASE 2: RIGHT SUBTREE OF THE RIGHT CHILD
+        		return RotateLeft(r);
+
+    		else if (balance < -1 && Nval < r->right->val) //CASE 3: RIGHT SUBTREE OF THE LEFT CHILD
+   			 {
+		        r->right = RotateRight(r->right);
+       			 return RotateLeft(r);
+    		 }
+    		 
+    		else if (balance > 1 && Nval > r->left->val) //CASE 4: LEFT SUBTREE OF THE RIGHT CHILD
+    		{
+		        r->left = RotateLeft(r->left);
+		        return RotateRight(r);
+    		}
+    		
+    		else
+    		return r;
+	}
+	
+		void preOrder(Node *root)
+		{
+		    if(root != NULL)
+		    {
+		        cout << root->val << " ";
+		        preOrder(root->left);
+		        preOrder(root->right);
+		    }
+		}
+
+		Node *InorderSuccessor(Node* n) 
+		{ 
+		    Node* curr = n; 
+		  
+		    // loop down to find the leftmost leaf
+		    while (curr->left != NULL) 
+		        curr = curr->left; 
+		  
+		    return curr; 
+		}
+		
+		//r=root
+		//Dval= val to be deleted 
+		Node* deletion(Node* r, int Dval) 
+		{ 
+		      
+		    //following normal BST deletion 
+		    if (r == NULL) 
+		        return r; 
+		  	
+		  	//if Dval is smaller then the current node
+		    if ( Dval < r->val ) 
+		        r->left = deletion(r->left, Dval); 
+		  
+		    //if Dval is greater then the current node
+		    else if( Dval > r->val ) 
+		        r->right = deletion(r->right, Dval); 
+		  
+		    //if Dval is equal then the current node
+		    else
+		    { 
+		        // node with only one child or no child 
+		        if( (r->left == NULL) || (r->right == NULL) ) 
+		        { 
+	
+					Node *temp; 
+					if(r->left)
+					temp = r->left;
+					else
+					temp = r->right;
+		  
+		            // No child case 
+		            if (temp == NULL) 
+		            { 
+		                temp = r; 
+		                r = NULL; 
+		            } 
+		            else // One child case 
+		            *r = *temp;  
+		                         
+		            delete temp; 
+		        } 
+		        else
+		        { 
+		            // node with two children: Get the inorder successor 
+		            Node* temp = InorderSuccessor(r->right); 
+		  
+		            // Copy the inorder successor's data to this node 
+		            r->val = temp->val; 
+		  
+		            // Delete the inorder successor 
+		            r->right = deletion(r->right, temp->val); 
+		        } 
+		    } 
+		  
+		    // If the tree had only one node
+		    if (r == NULL) 
+		    return r; 
+		  
+		    // updating height
+		    r->height = 1 + max(height(r->left), height(r->right)); 
+		  
+		    // getting balance 
+		    int balance = Balance(r); 
+		  
+		    // If this node becomes unbalanced, 
+		    // then there are 4 cases 
+		  
+		    if (balance > 1 && Balance(r->left) >= 0) //CASE 1: LEFT SUBTREE OF THE LEFT CHILD
+		        return RotateRight(r); 
+		  
+		  	if (balance < -1 && Balance(r->right) <= 0) //CASE 2: RIGHT SUBTREE OF THE RIGHT CHILD
+		        return RotateLeft(r); 
+		      
+			if (balance < -1 && Balance(r->right) > 0) //CASE 3: RIGHT SUBTREE OF THE LEFT CHILD
+		    { 
+		        r->right = RotateRight(r->right); 
+		        return RotateLeft(r); 
+		    }   
+		    if (balance > 1 && Balance(r->left) < 0) //CASE 4: LEFT SUBTREE OF THE RIGHT CHILD
+		    { 
+		        r->left = RotateLeft(r->left); 
+		        return RotateRight(r); 
+		    } 
+		  
+		  
+		    return r; 
+		}
+};
+
+int main()
+{
+		AVL T1;
+		Node *root= NULL;
+		
+		root = T1.insert(root, 1); 
+	    root = T1.insert(root, 2); 
+	    root = T1.insert(root, 3); 
+	    root = T1.insert(root, 4); 
+	    root = T1.insert(root, 5); 
+	    root = T1.insert(root, 6); 
+	    root = T1.insert(root, 16); 
+	    root = T1.insert(root, 15); 
+	    root = T1.insert(root, 14); 
+	    root = T1.insert(root, 16); 
+	    root = T1.insert(root, 15); 
+	    root = T1.insert(root, 13);
+	    
+		print2D(root);
+		
+		cout<<endl;
+		
+		cout<<"AFTER DELETION"<<endl;
+		
+		root = T1.deletion(root, 16); 
+		
+		print2D(root);
+	
+}

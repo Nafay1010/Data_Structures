@@ -1,0 +1,116 @@
+#include<iostream>
+using namespace std;
+
+class stack{
+	private:
+		int *arr;
+		int size;
+		int top;
+	public:
+		
+		stack(int s)
+		{
+			size=s;
+			top=-1;
+			arr=new int[size];
+		}
+		
+		void clear()
+		{
+			for(int i=0;i<size;i++)
+			{
+				arr[i]=0;
+			}
+		}
+		
+		bool isEmpty()
+		{
+			if(top==-1)
+				return 1;
+			else
+				return 0;
+		}
+		
+		bool isFull()
+		{
+			if(top==size-1)
+				return 1;
+			else
+				return 0;
+		}
+		
+		void PUSH(int val)
+		{
+			if(isFull())
+			{
+				cout<<"STACK OVERFLOW"<<endl;
+			}
+			else
+			{
+				arr[++top]=val;
+			}
+			
+		}
+		
+		int POP()
+		{
+			if(isEmpty())
+			{
+				cout<<"STACK UNDERFLOW"<<endl;
+			}
+			else
+			{
+				int val=arr[top];
+				arr[top]=0;
+				top--;
+				return val;
+			}
+			
+		}
+		
+		void print()
+		{		
+			if(isEmpty())
+			{
+				cout<<"STACK IS EMPTY"<<endl;
+			}
+			else
+			{
+				cout<<"=============STACK============="<<endl;
+				for(int i=size;i>0;i--)
+				{
+					if(isEmpty())
+						{
+							break;
+						}
+						else
+						{
+							cout<<POP()<<endl;
+						}
+				}
+					cout<<endl;
+			}
+				
+		}
+		
+};
+
+int main()
+{
+	stack S1(5);
+	S1.clear();
+	S1.PUSH(1);
+	S1.PUSH(2);
+	S1.PUSH(3);
+	S1.PUSH(4);
+	S1.PUSH(5);
+//	S1.PUSH(6);
+
+	S1.POP();
+	S1.POP();
+//	S1.POP();
+//	S1.POP();
+//	S1.POP();
+
+	S1.print();
+}

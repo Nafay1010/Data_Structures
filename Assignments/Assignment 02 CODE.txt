@@ -1,0 +1,175 @@
+#include<iostream>
+#include<cstddef>
+using namespace std;
+
+class node{
+		public:
+
+		int data;
+		node *next;
+		node *pre;
+	
+		node(int val)
+		{
+			data=val;
+			next=NULL;
+			pre=NULL; 
+		}
+};
+
+class list{
+	private:
+		node *head;
+		int size;
+	public:
+		list()
+		{
+			head=NULL;
+			size=0;
+		}
+		void get()
+		{
+			node *ptr= head;
+			cout<<"LIST"<<endl;
+			for(int i=0; i<size; i++)
+			{
+				cout<<ptr->data<<"\t";
+				ptr=ptr->next;
+			}
+			cout<<endl;
+		}
+		bool empty()
+		{
+			if(head==NULL)
+			{
+				return 0;
+			}
+			else
+			{
+				return 1;
+			}
+		}
+		void insert(int val, int pos)
+		{
+		//	cout<<"VAL :"<<val<<" POS: "<<pos<<endl;
+			node *n= new node(val);
+			if(pos>1 || pos<size+1)
+			{
+				node *cptr= head;
+				
+				for(int i=1; i<pos-1;i++)
+					cptr=cptr->next;
+				
+			//	node *temp= cptr->next;
+			//	cout<<"CPTR: "<<cptr->data<<endl;
+				n->next=cptr->next;
+				n->pre=cptr;
+				cptr->next=n;
+				cptr->next->pre=n;
+				
+				size++;
+				
+			}
+			else if(pos==1)
+			{
+			//	cout<<"HEADER POINTER "<<head<<endl;
+				n->next=head;
+				head=n;
+				head->pre=n;
+				size++;
+			}
+			else
+			{
+				cout<<"INVALID POSITION"<<endl;
+			}
+			
+		}
+		int search(int val)
+		{
+			if(empty()==0)
+			{
+				cout<<"LIST IS EMPTY"<<endl;
+			}
+			int pos=1;
+			node *cptr=head;
+			while(cptr!=NULL)//runs till current pointers address is NULL
+			{
+				if(cptr->data==val)
+				{
+					return pos;//value found
+				}
+				cptr=cptr->next;
+				pos++;
+			}
+			return 0;//value not found
+		
+			
+		}
+		void deletion(int val)
+		{
+			if(search(val)==0)
+			cout<<"VALUE NOT IN LIST"<<endl;
+			else
+			{
+			int pos=search(val);
+			node *cptr=head;
+			if(pos==1)
+			{
+				head=cptr->next;
+				delete cptr;
+				size--;
+			}
+			else if(pos>1 || pos<size)
+			{
+				for(int i=1; i<pos-1;i++)
+				{
+					cptr=cptr->next;
+				}
+				node *dptr= cptr->next;
+				cptr->next->pre=cptr;
+				cptr->next=dptr->next;
+				delete dptr;
+				size--;
+			}
+			 else if(pos==0)
+			{
+				cout<<"LIST IS EMPTY"<<endl;
+			}
+			}
+			
+		}
+};
+int main()
+{
+	list l1;
+	int val, pos;
+	cout<<"ENTER VALUE TO BE INSERTED: ";
+	cin>>val;
+	cout<<"ENTER THE POSITION WHERE U WANT THE VALUE TO BE INSERTED AT: ";
+	cin>>pos;
+	while(val!=-1)
+	{
+		l1.insert(val, pos);
+		cout<<"ENTER VALUE TO BE INSERTED[ENTER '-1' to quit]: ";
+		cin>>val;
+		cout<<"ENTER THE POSITION WHERE U WANT THE VALUE TO BE INSERTED AT: ";
+		cin>>pos;
+	}
+	cout<<"BEFORE DELETION"<<endl;
+		l1.get();
+		cout<<"ENTER VAL TO BE SEARCHED IN THE LIST"<<endl;
+		cin>>val;
+		if(l1.search(val)==0)
+		{
+			cout<<val<<" NOT IN LIST !"<<endl;
+		}
+		else
+		{
+			cout<<val<<" AT POSTION "<<l1.search(val)<<endl;
+		}
+		cout<<"ENTER VALUE TO BE DELETED: ";
+		cin>>val;
+		l1.deletion(val);
+		cout<<"AFTER DELETION"<<endl;
+		l1.get();
+}

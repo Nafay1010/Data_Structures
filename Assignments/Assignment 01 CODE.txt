@@ -1,0 +1,171 @@
+#include<iostream>
+using namespace std;
+
+class list
+{
+	private:
+		int Msize;
+		int Csize;
+		int *ptr;
+		int *cptr;
+	public:
+		
+		list(int s)
+		{
+			Msize=s;
+			ptr=new int[Msize];
+			cptr=ptr;
+			for(int i=0;i<Msize;i++)
+			{
+				*cptr=0;
+				cptr++;
+			}
+			cptr=ptr;
+		}
+		
+		void start()
+		{
+			cptr=ptr;
+		}
+		void next()
+		{
+			cptr++;
+		}
+		void back()
+		{
+			cptr--;
+		}
+		void end()
+		{
+			start();
+			for(int i=1;i<Csize;i++)
+			{
+				next();
+			}
+		}		
+		int length()
+		{
+			return Msize;
+		}
+		
+		
+		void set()
+		{
+			int size;
+			cout<<"Enter the number of elements: ";
+			cin>>size;
+			Csize=size;
+			
+			for (int i=0; i<Csize; i++)
+			{
+				cout<<"Enter for List["<<i<<"]: ";
+				cin>>*cptr;
+				next();
+			}
+		}
+		
+		void add(int val, int x)
+		{
+			start();
+			end();
+			for(int i=Csize; i>x; i--)
+			{
+				*(cptr+1)=*cptr;
+				back();
+			}
+			*(cptr+1)=val;
+			Csize++;
+			start();
+		}
+		void remove(int x)
+		{
+			start();
+			end();
+			for(int i=Csize; i>x+1; i--)
+			{
+				back();	
+			}
+			for(int i=x+1; i<Csize;i++)
+			{
+				cptr=(cptr+1);
+				next();
+				if(i==Csize-1)
+				*(cptr)=0;
+			}
+			Csize--;
+			start();
+		}
+		void update(int val, int x)
+		{
+			start();
+			for(int i=0;i<x;i++)
+			{
+				next();
+			}
+			if(*cptr==0)
+			{
+				Csize++;
+			}
+			*cptr=val;
+			start();
+		}
+		void getFULLARRAY()
+		{
+			start();
+			for(int i=0;i<Msize;i++)
+			{
+				cout<<*cptr<<"\t";
+				next();
+			}
+			start();
+			cout<<"SIZE: "<<Csize<<endl;
+			cout<<endl;
+		}
+		void get(int pos)
+		{
+			start();
+			for(int i=0;i<pos;i++)
+			{
+				next();
+			}
+			cout<<*cptr<<endl;
+			start();
+		}
+		~list()
+		{
+			delete[] ptr;
+		}
+};
+
+int main()
+{
+	int s;
+	int val,i;
+	cout<<"ENTER SIZE FOR ARRAY: ";
+	cin>>s;
+	list l1(s);
+	l1.set();
+	cout<<"ENTER VALUE TO BE REPLACED: ";
+	cin>>val;
+	cout<<"ENTER POSITION TO UPDATED: ";
+	cin>>i;
+	l1.update(val,--i);
+	l1.getFULLARRAY();
+	cout<<"ENTER VALUE TO BE ADDED: ";
+	cin>>val;
+	cout<<"ENTER POSITION TO BE ADDED: ";
+	cin>>i;
+	l1.add(val,--i);
+	cout<<"BEFORE REMOVE"<<endl;
+	cout<<endl;
+	l1.getFULLARRAY();
+	cout<<"ENTER POSITION TO BE REMOVED: ";
+	cin>>i;
+	l1.remove(--i);
+	cout<<"AFTER REMOVE"<<endl;
+	cout<<endl;
+	l1.getFULLARRAY();
+	cout<<"ENTER A POSITION TO BE OUTPUTED: ";
+	cin>>i;
+	l1.get(--i);
+}
